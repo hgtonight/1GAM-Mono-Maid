@@ -1,17 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace Maid
 {
-    class Ship
+    class Ship : SpaceObject
     {
-        public Vector2 Position, Velocity, RotationOrigin;
-        public double Rotation;
         public bool Accelerating;
-        private Rectangle Sprite;
         private Vector2[] AccessoryVectors, DrawAccessoryVectors;
+        private List<ShipAccessory> Weapons;
 
         public Ship()
         {
@@ -19,7 +18,7 @@ namespace Maid
         }
 
         public void InitShip() {
-            Position = new Vector2(400, 200);
+            Position = new Vector2(200, 100);
 
             AccessoryVectors = new Vector2[3];
             DrawAccessoryVectors = new Vector2[3];
@@ -38,16 +37,15 @@ namespace Maid
 
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             // Render the Accessories
             for (int i = 0; i < DrawAccessoryVectors.Length; i++)
             {
                 spriteBatch.Draw(SpaceSprites.Sheet, DrawAccessoryVectors[i], SpaceSprites.gun00(), Color.White, (float)Rotation, RotationOrigin, 1.0f, SpriteEffects.None, 0.0f);
             }
-            
-            // Render dat ship
-            spriteBatch.Draw(SpaceSprites.Sheet, Position, Sprite, Color.White, (float)Rotation, RotationOrigin, 1.0f, SpriteEffects.None, 0.0f);
+
+            base.Draw(gameTime, spriteBatch);
         }
 
         public void Update(GameTime gameTime, InputWrapper Input)
@@ -110,27 +108,15 @@ namespace Maid
             }
         }
 
-        public void WrapPosition(int X, int Y)
+        public override void WrapPosition()
         {
-            if (Position.X > X)
-            {
-                Position.X -= X;
-            }
-            else if (Position.X < 0)
-            {
-                Position.X += X;
-            }
-
-            if (Position.Y > Y)
-            {
-                Position.Y -= Y;
-            }
-            else if (Position.Y < 0)
-            {
-                Position.Y += Y;
-            }
-
+            base.WrapPosition();
             UpdateAccessoryVectors();
+        }
+
+        public Vector2 ActiveWeaponPosition()
+        {
+            return Position + new Vector2(42, -22);
         }
     }
 }

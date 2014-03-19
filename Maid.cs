@@ -16,12 +16,14 @@ namespace Maid
     /// </summary>
     public class Maid : Microsoft.Xna.Framework.Game
     {
+        const int MAX_BOOLETS = 20;
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Ship PlayerShip;
         InputWrapper Input;
         SoundEffect FlameFuel;
         SoundEffectInstance Accel;
+        List<Boolet> Boolets;
 
         public Maid()
         {
@@ -29,6 +31,7 @@ namespace Maid
             Content.RootDirectory = "Content";
             PlayerShip = new Ship();
             Input = new InputWrapper();
+            Boolets = new List<Boolet>();
         }
 
         /// <summary>
@@ -56,7 +59,9 @@ namespace Maid
             SpaceSprites.Sheet = Content.Load<Texture2D>("sheet");
             FlameFuel = Content.Load<SoundEffect>("accellerate");
             Accel = FlameFuel.CreateInstance();
-            PlayerShip.SetSprite(SpaceSprites.playerShip1_red());
+            PlayerShip.SetSprite(SpaceSprites.playerShip1_blue());
+
+            SpaceObject.WrapCoords = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
         }
 
         /// <summary>
@@ -81,8 +86,20 @@ namespace Maid
             Input.Update(gameTime);
             PlayerShip.Update(gameTime, Input);
 
+            if(Input.JustPressed(Keys.Space) && Boolets.Count <= MAX_BOOLETS) {
+                Boolets.Add(new Boolet(PlayerShip.ActiveWeaponPosition(), PlayerShip.CurrentRotation()));
+            }
+
+            for (int i = 0; i < Boolets.Count; i++)
+            {
+                if (!Boolets[i].Update())
+                {
+                    Boolets.RemoveAt(i);
+                }
+            }
+
             // Wrap objects around window
-            PlayerShip.WrapPosition(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            PlayerShip.WrapPosition();
 
             if (PlayerShip.Accelerating)
             {
@@ -110,6 +127,10 @@ namespace Maid
             
             PlayerShip.Draw(gameTime, spriteBatch);
 
+            for (int i = 0; i < Boolets.Count; i++)
+            {
+                Boolets[i].Draw(gameTime, spriteBatch);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }
