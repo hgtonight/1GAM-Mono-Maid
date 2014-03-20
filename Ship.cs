@@ -11,6 +11,8 @@ namespace Maid
         public bool Accelerating;
         private Vector2[] AccessoryVectors, DrawAccessoryVectors;
         private List<ShipAccessory> Weapons;
+        private Rectangle Sprite;
+        private List<ShipAccessory> Accessories;
 
         public Ship()
         {
@@ -23,26 +25,32 @@ namespace Maid
             AccessoryVectors = new Vector2[3];
             DrawAccessoryVectors = new Vector2[3];
 
+            Position = new Vector2(400, 200);
+            Accessories = new List<ShipAccessory>();
+            
             Velocity = new Vector2(0, 0);
             Rotation = 0;
             RotationOrigin = new Vector2(0, 0);
+        }
+
+        public void AddAccessory(Vector2 Offset, Rectangle Sprite)
+        {
+            Accessories.Add(new ShipAccessory(Offset, Sprite));
         }
 
         public void SetSprite(Rectangle sprite)
         {
             Sprite = sprite;
             RotationOrigin = new Vector2(Sprite.Width / 2, Sprite.Height / 2);
-
             UpdateAccessoryVectors();
-
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
             // Render the Accessories
-            for (int i = 0; i < DrawAccessoryVectors.Length; i++)
+            for (int i = 0; i < Accessories.Count; i++)
             {
-                spriteBatch.Draw(SpaceSprites.Sheet, DrawAccessoryVectors[i], SpaceSprites.gun00(), Color.White, (float)Rotation, RotationOrigin, 1.0f, SpriteEffects.None, 0.0f);
+                Accessories[i].Draw(gameTime, spriteBatch);
             }
 
             base.Draw(gameTime, spriteBatch);
@@ -83,28 +91,14 @@ namespace Maid
             Position += (Velocity * mills / 1000);
 
             UpdateAccessoryVectors();
-            DrawAccessoryVectors = (Vector2[])AccessoryVectors.Clone();
-            RotatePoints(ref Position, (float)Rotation, ref DrawAccessoryVectors);
         }
 
         private void UpdateAccessoryVectors()
         {
-            AccessoryVectors[0] = Position + new Vector2(12, 10);
-            AccessoryVectors[1] = Position + new Vector2(42, -22);
-            AccessoryVectors[2] = Position + new Vector2(72, 10);
-        }
-
-        private static void RotatePoints(ref Vector2 origin, float radians, ref Vector2[] Vectors)
-        {
-            Matrix myRotationMatrix = Matrix.CreateRotationZ(radians);
-
-            for (int i = 0; i < Vectors.Length; i++)
+            for (int i = 0; i < Accessories.Count; i++)
             {
-                // Rotate relative to origin.
-                Vector2 rotatedVector =  Vector2.Transform(Vectors[i] - origin, myRotationMatrix);
-
-                // Add origin to get final location.
-                Vectors[i] = rotatedVector + origin;
+                Accessories[i].UpdatePosition(Position);
+                Accessories[i].UpdateDrawVector(RotationOrigin, (float)Rotation);
             }
         }
 

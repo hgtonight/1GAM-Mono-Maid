@@ -21,17 +21,23 @@ namespace Maid
         SpriteBatch spriteBatch;
         Ship PlayerShip;
         InputWrapper Input;
-        SoundEffect FlameFuel;
+        SoundEffect FlameFuel, LaserPewPew;
         SoundEffectInstance Accel;
         List<Boolet> Boolets;
+        List<SpaceBoolet> Bullets;
+        const int BulletLimit = 180;
 
         public Maid()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             PlayerShip = new Ship();
+            PlayerShip.AddAccessory(new Vector2(12, 10), SpaceSprites.gun00());
+            PlayerShip.AddAccessory(new Vector2(42, -22), SpaceSprites.gun00());
+            PlayerShip.AddAccessory(new Vector2(72, 10), SpaceSprites.gun00());
             Input = new InputWrapper();
             Boolets = new List<Boolet>();
+            Bullets = new List<SpaceBoolet>();
         }
 
         /// <summary>
@@ -58,6 +64,7 @@ namespace Maid
 
             SpaceSprites.Sheet = Content.Load<Texture2D>("sheet");
             FlameFuel = Content.Load<SoundEffect>("accellerate");
+            LaserPewPew = Content.Load<SoundEffect>("laser9");
             Accel = FlameFuel.CreateInstance();
             PlayerShip.SetSprite(SpaceSprites.playerShip1_blue());
 
@@ -86,6 +93,7 @@ namespace Maid
             Input.Update(gameTime);
             PlayerShip.Update(gameTime, Input);
 
+<<<<<<< HEAD
             if(Input.JustPressed(Keys.Space) && Boolets.Count <= MAX_BOOLETS) {
                 Boolets.Add(new Boolet(PlayerShip.ActiveWeaponPosition(), PlayerShip.CurrentRotation()));
             }
@@ -95,6 +103,26 @@ namespace Maid
                 if (!Boolets[i].Update())
                 {
                     Boolets.RemoveAt(i);
+				}
+			}
+            if (Input.JustPressed(Keys.Space) && Bullets.Count < BulletLimit)
+            {
+                Bullets.Add(new SpaceBoolet(PlayerShip.Position, PlayerShip.Rotation));
+                LaserPewPew.Play();
+            }
+
+            if (Bullets.Count > 0)
+            {
+                for (int i = 0; i < Bullets.Count; i++)
+                {
+                    if (Bullets[i].Update(gameTime))
+                    {
+                        Bullets.RemoveAt(i);
+                    }
+                    else
+                    {
+                        Bullets[i].WrapPosition(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+                    }
                 }
             }
 
@@ -124,6 +152,14 @@ namespace Maid
         {
             GraphicsDevice.Clear(Color.Gray);
             spriteBatch.Begin();
+            
+            if (Bullets.Count > 0)
+            {
+                for (int i = 0; i < Bullets.Count; i++)
+                {
+                    Bullets[i].Draw(gameTime, spriteBatch);
+                }
+            }
             
             PlayerShip.Draw(gameTime, spriteBatch);
 

@@ -6,17 +6,34 @@ namespace Maid
 {
     class ShipAccessory
     {
-        private Vector2 Offset;
-        private Rectangle Sprite;
+        Vector2 Offset, Position, DrawVector, RotationOrigin;
+        double Rotation;
+        Rectangle Sprite;
 
-        public ShipAccessory(Vector2 offset)
+        public ShipAccessory(Vector2 Offset1, Rectangle Sprite1)
         {
-            Offset = offset;
+            this.Offset = Offset1;
+            this.Position = new Vector2(0, 0) + Offset1;
+            this.Sprite = Sprite1;
         }
 
-        public void SetSprite(Rectangle sprite)
+        public void UpdatePosition(Vector2 NewPosition)
         {
-            Sprite = sprite;
+            this.Position = NewPosition + this.Offset;
+        }
+
+        public void UpdateDrawVector(Vector2 origin, float radians)
+        {
+            this.Rotation = radians;
+            this.RotationOrigin = origin;
+            Matrix myRotationMatrix = Matrix.CreateRotationZ(radians);
+            Vector2 rotatedVector =  Vector2.Transform(this.Position - origin, myRotationMatrix);
+            this.DrawVector = rotatedVector + origin;
+        }
+
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(SpaceSprites.Sheet, DrawVector, Sprite, Color.White, (float)Rotation, RotationOrigin, 1.0f, SpriteEffects.None, 0.0f);
         }
     }
 }
