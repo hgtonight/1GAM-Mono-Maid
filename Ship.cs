@@ -9,10 +9,8 @@ namespace Maid
     class Ship : SpaceObject
     {
         public bool Accelerating;
-        private Vector2[] AccessoryVectors, DrawAccessoryVectors;
-        private List<ShipAccessory> Weapons;
-        private Rectangle Sprite;
         private List<ShipAccessory> Accessories;
+        private int CurrentWeapon;
 
         public Ship()
         {
@@ -20,16 +18,11 @@ namespace Maid
         }
 
         public void InitShip() {
-            Position = new Vector2(200, 100);
-
-            AccessoryVectors = new Vector2[3];
-            DrawAccessoryVectors = new Vector2[3];
-
-            Position = new Vector2(400, 200);
+            position = new Vector2(200, 100);
             Accessories = new List<ShipAccessory>();
-            
+            CurrentWeapon = 0;
             Velocity = new Vector2(0, 0);
-            Rotation = 0;
+            rotation = 0;
             RotationOrigin = new Vector2(0, 0);
         }
 
@@ -42,7 +35,6 @@ namespace Maid
         {
             Sprite = sprite;
             RotationOrigin = new Vector2(Sprite.Width / 2, Sprite.Height / 2);
-            UpdateAccessoryVectors();
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -50,7 +42,7 @@ namespace Maid
             // Render the Accessories
             for (int i = 0; i < Accessories.Count; i++)
             {
-                Accessories[i].Draw(gameTime, spriteBatch);
+                Accessories[i].Draw(gameTime, spriteBatch, this.position);
             }
 
             base.Draw(gameTime, spriteBatch);
@@ -67,7 +59,7 @@ namespace Maid
             if (Input.KeyboardSt().IsKeyDown(Keys.Up))
             {
                 // find the component magnitudes for a unit vector pointing in the direction of the rotation
-                Velocity += new Vector2((float)Math.Cos(Rotation - (Math.PI / 2)), (float)Math.Sin(Rotation - (Math.PI / 2)));
+                Velocity += new Vector2((float)Math.Cos(rotation - (Math.PI / 2)), (float)Math.Sin(rotation - (Math.PI / 2)));
                 Accelerating = true;
             }
             else
@@ -77,40 +69,32 @@ namespace Maid
 
             if (Input.KeyboardSt().IsKeyDown(Keys.Right))
             {
-                Rotation += 0.1f;
+                rotation += 0.1f;
             }
 
             if (Input.KeyboardSt().IsKeyDown(Keys.Left))
             {
-                Rotation -= 0.1f;
+                rotation -= 0.1f;
             }
 
             // Keep angle within 0 - 2pi
-            Rotation = Rotation % (Math.PI * 2);
+            rotation = rotation % (Math.PI * 2);
 
-            Position += (Velocity * mills / 1000);
+            position += (Velocity * mills / 1000);
 
-            UpdateAccessoryVectors();
-        }
-
-        private void UpdateAccessoryVectors()
-        {
             for (int i = 0; i < Accessories.Count; i++)
             {
-                Accessories[i].UpdatePosition(Position);
-                Accessories[i].UpdateDrawVector(RotationOrigin, (float)Rotation);
+                Accessories[i].UpdatePosition(position, rotation);
             }
-        }
 
-        public override void WrapPosition()
-        {
-            base.WrapPosition();
-            UpdateAccessoryVectors();
+            this.WrapPosition();
         }
 
         public Vector2 ActiveWeaponPosition()
         {
-            return Position + new Vector2(42, -22);
+            CurrentWeapon++;
+            CurrentWeapon = CurrentWeapon % Accessories.Count;
+            return Accessories[CurrentWeapon].Position();
         }
     }
 }

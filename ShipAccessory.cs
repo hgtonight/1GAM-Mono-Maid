@@ -4,36 +4,35 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Maid
 {
-    class ShipAccessory
+    class ShipAccessory : SpaceObject
     {
-        Vector2 Offset, Position, DrawVector, RotationOrigin;
-        double Rotation;
-        Rectangle Sprite;
+        Vector2 Offset, InternalPosition;
 
         public ShipAccessory(Vector2 Offset1, Rectangle Sprite1)
         {
             this.Offset = Offset1;
-            this.Position = new Vector2(0, 0) + Offset1;
+            this.InternalPosition = new Vector2(0, 0) + Offset1;
             this.Sprite = Sprite1;
         }
 
-        public void UpdatePosition(Vector2 NewPosition)
+        public void UpdatePosition(Vector2 NewPosition, double Rot)
         {
-            this.Position = NewPosition + this.Offset;
+            this.InternalPosition = NewPosition + this.Offset;
+            this.rotation = Rot;
         }
 
-        public void UpdateDrawVector(Vector2 origin, float radians)
+        public void UpdateDrawVector(Vector2 origin)
         {
-            this.Rotation = radians;
             this.RotationOrigin = origin;
-            Matrix myRotationMatrix = Matrix.CreateRotationZ(radians);
-            Vector2 rotatedVector =  Vector2.Transform(this.Position - origin, myRotationMatrix);
-            this.DrawVector = rotatedVector + origin;
+            Matrix myRotationMatrix = Matrix.CreateRotationZ((float)this.rotation);
+            Vector2 rotatedVector =  Vector2.Transform(this.InternalPosition - origin, myRotationMatrix);
+            this.position = rotatedVector + origin;
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        public void Draw(GameTime gameTime, SpriteBatch spriteBatch, Vector2 origin)
         {
-            spriteBatch.Draw(SpaceSprites.Sheet, DrawVector, Sprite, Color.White, (float)Rotation, RotationOrigin, 1.0f, SpriteEffects.None, 0.0f);
+            this.UpdateDrawVector(origin);
+            base.Draw(gameTime, spriteBatch);
         }
     }
 }
