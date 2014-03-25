@@ -48,12 +48,12 @@ namespace Maid
             base.Draw(gameTime, spriteBatch);
         }
 
-        public void Update(GameTime gameTime, InputWrapper Input)
+        public override void Update(GameTime gameTime, InputWrapper Input)
         {
-            int mills = gameTime.ElapsedGameTime.Milliseconds;
             if (Input.KeyboardSt().IsKeyDown(Keys.Down))
             {
-                //Velocity += new Vector2(0, 1);
+                Velocity -= new Vector2((float)Math.Cos(rotation - (Math.PI / 2)), (float)Math.Sin(rotation - (Math.PI / 2)));
+                Accelerating = true;
             }
 
             if (Input.KeyboardSt().IsKeyDown(Keys.Up))
@@ -77,23 +77,20 @@ namespace Maid
                 rotation -= 0.1f;
             }
 
-            // Keep angle within 0 - 2pi
-            rotation = rotation % (Math.PI * 2);
-
-            position += (Velocity * mills / 1000);
+            base.Update(gameTime, Input);
+            this.WrapPosition();
 
             for (int i = 0; i < Accessories.Count; i++)
             {
                 Accessories[i].UpdatePosition(position, rotation);
             }
-
-            this.WrapPosition();
         }
 
         public Vector2 ActiveWeaponPosition()
         {
             CurrentWeapon++;
             CurrentWeapon = CurrentWeapon % Accessories.Count;
+            Accessories[CurrentWeapon].StartAnimation();
             return Accessories[CurrentWeapon].Position();
         }
     }

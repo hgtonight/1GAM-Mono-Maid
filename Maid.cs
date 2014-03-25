@@ -30,9 +30,9 @@ namespace Maid
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             PlayerShip = new Ship();
-            PlayerShip.AddAccessory(new Vector2(12, 10), SpaceSprites.gun00());
-            PlayerShip.AddAccessory(new Vector2(42, -22), SpaceSprites.gun00());
-            PlayerShip.AddAccessory(new Vector2(72, 10), SpaceSprites.gun00());
+            PlayerShip.AddAccessory(new Vector2(-58, -50), SpaceSprites.gun00());
+            PlayerShip.AddAccessory(new Vector2(-1 * SpaceSprites.gun00().Width + 1, -79), SpaceSprites.gun00());
+            PlayerShip.AddAccessory(new Vector2(30, -50), SpaceSprites.gun00());
             Input = new InputWrapper();
             Boolets = new List<Boolet>();
         }

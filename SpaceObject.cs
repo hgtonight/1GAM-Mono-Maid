@@ -67,6 +67,15 @@ namespace Maid
             {
                 position.Y += WrapCoords.Y;
             }
+
+            // Keep angle within 0 - 2pi
+            rotation = rotation % (Math.PI * 2);
+        }
+
+        public virtual void Update(GameTime gameTime, InputWrapper Input)
+        {
+            int mills = gameTime.ElapsedGameTime.Milliseconds;
+            position += (Velocity * mills / 1000);
         }
 
         public double Rotation()
