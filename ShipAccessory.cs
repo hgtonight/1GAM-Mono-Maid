@@ -22,10 +22,10 @@ namespace Maid
             AnimationFrames = new List<Vector2>();
             // basic firing animation
             AnimationFrames.Add(new Vector2(0, 0));
-            AnimationFrames.Add(new Vector2(0, -2));
-            AnimationFrames.Add(new Vector2(0, -4));
-            AnimationFrames.Add(new Vector2(0, -1));
+            AnimationFrames.Add(new Vector2(0, 2));
+            AnimationFrames.Add(new Vector2(0, 4));
             AnimationFrames.Add(new Vector2(0, 1));
+            AnimationFrames.Add(new Vector2(0, -1));
             
         }
 
@@ -51,7 +51,7 @@ namespace Maid
         {
             if (Animating)
             {
-                if (gameTime.ElapsedGameTime.Ticks % 4 == 0)
+                if (gameTime.TotalGameTime.Ticks % 3 == 0)
                 {
                     AnimationIndex++;
 
@@ -74,6 +74,11 @@ namespace Maid
         {
             this.UpdateDrawVector(origin);
             base.Draw(gameTime, spriteBatch);
+        }
+
+        public Vector2 BulletSpawnPosition()
+        {
+            return this.position + new Vector2((float)Math.Cos(rotation - (Math.PI / 2)) * Sprite.Width / 2, (float)Math.Sin(rotation - (Math.PI / 2)) * Sprite.Width / 2);
         }
     }
 }

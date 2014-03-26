@@ -83,6 +83,7 @@ namespace Maid
             for (int i = 0; i < Accessories.Count; i++)
             {
                 Accessories[i].UpdatePosition(position, rotation);
+                Accessories[i].Update(gameTime, Input);
             }
         }
 
@@ -91,7 +92,7 @@ namespace Maid
             CurrentWeapon++;
             CurrentWeapon = CurrentWeapon % Accessories.Count;
             Accessories[CurrentWeapon].StartAnimation();
-            return Accessories[CurrentWeapon].Position();
+            return Accessories[CurrentWeapon].BulletSpawnPosition();
         }
     }
 }

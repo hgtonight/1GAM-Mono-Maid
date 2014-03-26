@@ -5,6 +5,7 @@ namespace Maid
 {
     class Boolet : SpaceObject
     {
+        const float magnitude = 0.1f;
         private int TicksUntilDeath;
         private new Vector2 Velocity;
         public Boolet(Vector2 Pos, Double Rot)
@@ -13,7 +14,7 @@ namespace Maid
             rotation = Rot;
             Sprite = SpaceSprites.laserBlue02();
             RotationOrigin = new Vector2(Sprite.Width / 2, Sprite.Height / 2);
-            Velocity = new Vector2((float)Math.Sin(rotation) * 2, (float)Math.Cos(rotation) * 2 * -1);
+            Velocity = new Vector2((float)Math.Sin(rotation) * magnitude, (float)Math.Cos(rotation) * magnitude * -1);
             TicksUntilDeath = 120;
         }
 

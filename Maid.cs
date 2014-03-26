@@ -30,9 +30,9 @@ namespace Maid
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             PlayerShip = new Ship();
-            PlayerShip.AddAccessory(new Vector2(-58, -50), SpaceSprites.gun00());
+            PlayerShip.AddAccessory(new Vector2(-45, -45), SpaceSprites.gun00());
             PlayerShip.AddAccessory(new Vector2(-1 * SpaceSprites.gun00().Width + 1, -79), SpaceSprites.gun00());
-            PlayerShip.AddAccessory(new Vector2(30, -50), SpaceSprites.gun00());
+            PlayerShip.AddAccessory(new Vector2(15, -45), SpaceSprites.gun00());
             Input = new InputWrapper();
             Boolets = new List<Boolet>();
         }
@@ -126,14 +126,14 @@ namespace Maid
         {
             GraphicsDevice.Clear(Color.Gray);
             spriteBatch.Begin();
-            
+            PlayerShip.Draw(gameTime, spriteBatch);
+
             for (int i = 0; i < Boolets.Count; i++)
             {
                 Boolets[i].Draw(gameTime, spriteBatch);
             }
             
-            PlayerShip.Draw(gameTime, spriteBatch);
-
+           
             spriteBatch.End();
             base.Draw(gameTime);
         }
